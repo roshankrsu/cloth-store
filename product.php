@@ -66,18 +66,35 @@ Category:
 <?= (int)$product['stock'] ?>
 </p>
 
-<div class="mb-3">
+<form action="add_to_cart.php" method="POST">
 
-<label class="form-label">Quantity</label>
+    <input
+        type="hidden"
+        name="product_id"
+        value="<?= $product['id'] ?>">
 
-<input
-type="number"
-class="form-control"
-value="1"
-min="1"
-max="<?= (int)$product['stock'] ?>">
+    <div class="mb-3">
 
-</div>
+        <label class="form-label">Quantity</label>
+
+        <input
+            type="number"
+            name="quantity"
+            class="form-control"
+            value="1"
+            min="1"
+            max="<?= (int)$product['stock'] ?>"
+            required>
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-success btn-lg">
+        🛒 Add to Cart
+    </button>
+
+</form>
 
 <button class="btn btn-success btn-lg">
 🛒 Add to Cart

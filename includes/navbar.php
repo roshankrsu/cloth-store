@@ -3,6 +3,31 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
+<?php
+
+$cartCount = 0;
+
+if (isset($_SESSION['user'])) {
+
+    include 'config/database.php';
+
+    $userId = $_SESSION['user']['id'];
+
+    $stmt = mysqli_prepare(
+        $conn,
+        "SELECT SUM(quantity) AS total FROM cart WHERE user_id=?"
+    );
+
+    mysqli_stmt_bind_param($stmt, "i", $userId);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    $row = mysqli_fetch_assoc($result);
+
+    $cartCount = $row['total'] ?? 0;
+}
+?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
@@ -29,36 +54,73 @@ if (session_status() === PHP_SESSION_NONE) {
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="products.php">Products</a>
+                    <a class="nav-link" href="products.php">
+                        Products
+                    </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="offers.php">Offers</a>
+                    <a class="nav-link" href="offers.php">
+                        Offers
+                    </a>
                 </li>
 
-                <?php if(isset($_SESSION['user'])) { ?>
+                <?php if (isset($_SESSION['user'])) { ?>
 
-<li class="nav-item">
-    <span class="nav-link">
-        👋 <?= htmlspecialchars($_SESSION['user']['full_name']) ?>
-    </span>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.php">
+                            🛒 Cart
 
-<li class="nav-item">
-    <a class="nav-link" href="logout.php">Logout</a>
-</li>
+                            <span class="badge bg-danger">
+                                <?= $cartCount ?>
+                            </span>
+                        </a>
+                    </li>
 
-<?php } else { ?>
+                <?php } ?>
 
-<li class="nav-item">
-    <a class="nav-link" href="login.php">Login</a>
-</li>
+                <?php if (isset($_SESSION['user'])) { ?>
 
-<li class="nav-item">
-    <a class="nav-link" href="register.php">Register</a>
-</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.php">
+                            🛒 Cart
+                            <span class="badge bg-danger"><?= $cartCount ?></span>
+                        </a>
+                    </li>
 
-<?php } ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my_orders.php">
+                            My Orders
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            👋 <?= htmlspecialchars($_SESSION['user']['full_name']) ?>
+                        </span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">
+                            Logout
+                        </a>
+                    </li>
+
+                <?php } else { ?>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">
+                            Login
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.php">
+                            Register
+                        </a>
+                    </li>
+
+                <?php } ?>
 
             </ul>
 

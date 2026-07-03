@@ -52,8 +52,8 @@ include 'config/database.php';
 
                         <img
                             src="assets/images/products/<?=
-                            htmlspecialchars($row['image'])
-                            ?>"
+                                                        htmlspecialchars($row['image'])
+                                                        ?>"
                             class="card-img-top product-image"
                             alt="<?= htmlspecialchars($row['product_name']) ?>">
 
@@ -88,13 +88,12 @@ include 'config/database.php';
 
                 </div>
 
-        <?php
+            <?php
 
             }
-
         } else {
 
-        ?>
+            ?>
 
             <div class="col-12">
 

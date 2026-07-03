@@ -12,16 +12,16 @@ $sql = "INSERT INTO users
 (full_name,email,phone,username,password)
 VALUES (?,?,?,?,?)";
 
-$stmt = mysqli_prepare($conn,$sql);
+$stmt = mysqli_prepare($conn, $sql);
 
 mysqli_stmt_bind_param(
-$stmt,
-"sssss",
-$full_name,
-$email,
-$phone,
-$username,
-$password
+    $stmt,
+    "sssss",
+    $full_name,
+    $email,
+    $phone,
+    $username,
+    $password
 );
 
 if (mysqli_stmt_execute($stmt)) {
