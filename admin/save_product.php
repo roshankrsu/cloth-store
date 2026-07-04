@@ -50,9 +50,7 @@ if (mysqli_stmt_execute($stmt)) {
 
     header("Location: add_product.php?success=1");
     exit;
-
 } else {
 
     echo "Database Error: " . mysqli_error($conn);
-
 }
