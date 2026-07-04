@@ -33,76 +33,72 @@ $product = mysqli_fetch_assoc($result);
 
 <div class="container mt-5">
 
-<div class="row">
+    <div class="row">
 
-<div class="col-md-6">
+        <div class="col-md-6">
 
-<img
-src="assets/images/products/<?= htmlspecialchars($product['image']) ?>"
-class="img-fluid rounded shadow"
-alt="<?= htmlspecialchars($product['product_name']) ?>">
+            <img
+                src="assets/images/products/<?= htmlspecialchars($product['image']) ?>"
+                class="img-fluid rounded shadow"
+                alt="<?= htmlspecialchars($product['product_name']) ?>">
 
-</div>
+        </div>
 
-<div class="col-md-6">
+        <div class="col-md-6">
 
-<h2><?= htmlspecialchars($product['product_name']) ?></h2>
+            <h2><?= htmlspecialchars($product['product_name']) ?></h2>
 
-<p class="text-muted">
-Category:
-<strong><?= htmlspecialchars($product['category_name']) ?></strong>
-</p>
+            <p class="text-muted">
+                Category:
+                <strong><?= htmlspecialchars($product['category_name']) ?></strong>
+            </p>
 
-<h3 class="text-success">
-₹<?= number_format($product['price'],2) ?>
-</h3>
+            <h3 class="text-success">
+                ₹<?= number_format($product['price'], 2) ?>
+            </h3>
 
-<p>
-<?= nl2br(htmlspecialchars($product['description'])) ?>
-</p>
+            <p>
+                <?= nl2br(htmlspecialchars($product['description'])) ?>
+            </p>
 
-<p>
-<strong>Stock:</strong>
-<?= (int)$product['stock'] ?>
-</p>
+            <p>
+                <strong>Stock:</strong>
+                <?= (int)$product['stock'] ?>
+            </p>
 
-<form action="add_to_cart.php" method="POST">
+            <form action="add_to_cart.php" method="POST">
 
-    <input
-        type="hidden"
-        name="product_id"
-        value="<?= $product['id'] ?>">
+                <input
+                    type="hidden"
+                    name="product_id"
+                    value="<?= $product['id'] ?>">
 
-    <div class="mb-3">
+                <div class="mb-3">
 
-        <label class="form-label">Quantity</label>
+                    <label class="form-label">Quantity</label>
 
-        <input
-            type="number"
-            name="quantity"
-            class="form-control"
-            value="1"
-            min="1"
-            max="<?= (int)$product['stock'] ?>"
-            required>
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        value="1"
+                        min="1"
+                        max="<?= (int)$product['stock'] ?>"
+                        required>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success btn-lg">
+                    🛒 Add to Cart
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
-
-    <button
-        type="submit"
-        class="btn btn-success btn-lg">
-        🛒 Add to Cart
-    </button>
-
-</form>
-
-<button class="btn btn-success btn-lg">
-🛒 Add to Cart
-</button>
-
-</div>
-
-</div>
 
 </div>
 
