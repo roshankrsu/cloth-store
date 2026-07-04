@@ -70,20 +70,6 @@ if (isset($_SESSION['user'])) {
                     <li class="nav-item">
                         <a class="nav-link" href="cart.php">
                             🛒 Cart
-
-                            <span class="badge bg-danger">
-                                <?= $cartCount ?>
-                            </span>
-                        </a>
-                    </li>
-
-                <?php } ?>
-
-                <?php if (isset($_SESSION['user'])) { ?>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="cart.php">
-                            🛒 Cart
                             <span class="badge bg-danger"><?= $cartCount ?></span>
                         </a>
                     </li>
