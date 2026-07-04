@@ -15,6 +15,7 @@ $offset = ($page - 1) * $limit;
 
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
+$sort = $_GET['sort'] ?? '';
 ?>
 
 <div class="container mt-5">
@@ -28,7 +29,7 @@ $category = $_GET['category'] ?? '';
 
         <div class="row">
 
-            <div class="col-md-5">
+            <div class="col-md-4">
 
                 <input
                     type="text"
@@ -39,7 +40,7 @@ $category = $_GET['category'] ?? '';
 
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
 
                 <select
                     name="category"
@@ -50,8 +51,8 @@ $category = $_GET['category'] ?? '';
                     <?php
 
                     $countSql = "SELECT COUNT(*) AS total
-             FROM products
-             WHERE 1=1";
+                      FROM products
+                      WHERE 1=1";
 
                     $countParams = [];
                     $countTypes = "";
@@ -116,6 +117,31 @@ $category = $_GET['category'] ?? '';
 
             </div>
 
+            <div class="col-md-2">
+
+                <select name="sort" class="form-select">
+
+                    <option value="">Latest</option>
+
+                    <option value="price_asc"
+                        <?= (($_GET['sort'] ?? '') == 'price_asc') ? 'selected' : '' ?>>
+                        Price: Low to High
+                    </option>
+
+                    <option value="price_desc"
+                        <?= (($_GET['sort'] ?? '') == 'price_desc') ? 'selected' : '' ?>>
+                        Price: High to Low
+                    </option>
+
+                    <option value="name"
+                        <?= (($_GET['sort'] ?? '') == 'name') ? 'selected' : '' ?>>
+                        Name (A-Z)
+                    </option>
+
+                </select>
+
+            </div>
+
         </div>
 
     </form>
@@ -151,7 +177,25 @@ $category = $_GET['category'] ?? '';
             $types .= "i";
         }
 
-        $sql .= " ORDER BY p.id DESC LIMIT ?, ?";
+        switch ($sort) {
+
+            case "price_asc":
+                $sql .= " ORDER BY p.price ASC";
+                break;
+
+            case "price_desc":
+                $sql .= " ORDER BY p.price DESC";
+                break;
+
+            case "name":
+                $sql .= " ORDER BY p.product_name ASC";
+                break;
+
+            default:
+                $sql .= " ORDER BY p.id DESC";
+        }
+
+        $sql .= " LIMIT ?, ?";
 
         $params[] = $offset;
         $params[] = $limit;
@@ -259,29 +303,29 @@ $category = $_GET['category'] ?? '';
 
 <?php if ($totalPages > 1) { ?>
 
-<nav class="mt-4">
+    <nav class="mt-4">
 
-<ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-center">
 
-<?php for ($i = 1; $i <= $totalPages; $i++) { ?>
+            <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
 
-<li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
 
-<a
-class="page-link"
-href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&category=<?= urlencode($category) ?>">
+                    <a
+                        class="page-link"
+                        href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&category=<?= urlencode($category) ?>&sort=<?= urlencode($sort) ?>"
 
-<?= $i ?>
+                        <?= $i ?>
 
-</a>
+                        </a>
 
-</li>
+                </li>
 
-<?php } ?>
+            <?php } ?>
 
-</ul>
+        </ul>
 
-</nav>
+    </nav>
 
 <?php } ?>
 
