@@ -4,6 +4,7 @@ include 'includes/header.php';
 include 'includes/navbar.php';
 
 $search = $_GET['search'] ?? '';
+$category = $_GET['category'] ?? '';
 ?>
 
 <div class="container mt-5">
@@ -12,12 +13,12 @@ $search = $_GET['search'] ?? '';
         <i class="bi bi-bag-fill"></i> Our Products
     </h2>
 
-    <!-- Search Form -->
+    <!-- Search & Category Filter -->
     <form method="GET" class="mb-4">
 
         <div class="row">
 
-            <div class="col-md-10">
+            <div class="col-md-5">
 
                 <input
                     type="text"
@@ -28,10 +29,46 @@ $search = $_GET['search'] ?? '';
 
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-4">
+
+                <select
+                    name="category"
+                    class="form-select">
+
+                    <option value="">All Categories</option>
+
+                    <?php
+
+                    $categories = mysqli_query(
+                        $conn,
+                        "SELECT * FROM categories ORDER BY category_name"
+                    );
+
+                    while ($cat = mysqli_fetch_assoc($categories)) {
+
+                    ?>
+
+                        <option
+                            value="<?= $cat['id'] ?>"
+                            <?= ($category == $cat['id']) ? 'selected' : '' ?>>
+
+                            <?= htmlspecialchars($cat['category_name']) ?>
+
+                        </option>
+
+                    <?php } ?>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
 
                 <button class="btn btn-primary w-100">
-                    <i class="bi bi-search"></i> Search
+
+                    <i class="bi bi-search"></i>
+                    Search
+
                 </button>
 
             </div>
@@ -44,35 +81,46 @@ $search = $_GET['search'] ?? '';
 
         <?php
 
-        if ($search != "") {
+        $sql = "SELECT p.*, c.category_name
+                FROM products p
+                LEFT JOIN categories c
+                ON p.category_id = c.id
+                WHERE 1=1";
 
-            $sql = "SELECT p.*, c.category_name
-                    FROM products p
-                    LEFT JOIN categories c
-                    ON p.category_id = c.id
-                    WHERE p.product_name LIKE ?
-                    ORDER BY p.id DESC";
+        $params = [];
+        $types = "";
 
-            $stmt = mysqli_prepare($conn, $sql);
+        if (!empty($search)) {
 
-            $keyword = "%" . $search . "%";
+            $sql .= " AND p.product_name LIKE ?";
 
-            mysqli_stmt_bind_param($stmt, "s", $keyword);
+            $params[] = "%" . $search . "%";
 
-            mysqli_stmt_execute($stmt);
-
-            $result = mysqli_stmt_get_result($stmt);
-
-        } else {
-
-            $sql = "SELECT p.*, c.category_name
-                    FROM products p
-                    LEFT JOIN categories c
-                    ON p.category_id = c.id
-                    ORDER BY p.id DESC";
-
-            $result = mysqli_query($conn, $sql);
+            $types .= "s";
         }
+
+        if (!empty($category)) {
+
+            $sql .= " AND p.category_id=?";
+
+            $params[] = $category;
+
+            $types .= "i";
+        }
+
+        $sql .= " ORDER BY p.id DESC";
+
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!empty($params)) {
+
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+
+        }
+
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) > 0) {
 
@@ -108,7 +156,7 @@ $search = $_GET['search'] ?? '';
                             </h5>
 
                             <p>
-                                Stock:
+                                <strong>Stock:</strong>
                                 <?= (int)$row['stock'] ?>
                             </p>
 
@@ -146,13 +194,21 @@ $search = $_GET['search'] ?? '';
 
         } else {
 
-            echo "<div class='alert alert-warning'>
-                    <i class='bi bi-exclamation-circle'></i>
-                    No products found.
-                  </div>";
-        }
-
         ?>
+
+            <div class="col-12">
+
+                <div class="alert alert-warning text-center">
+
+                    <i class="bi bi-exclamation-circle"></i>
+
+                    No products found.
+
+                </div>
+
+            </div>
+
+        <?php } ?>
 
     </div>
 
