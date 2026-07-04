@@ -1,5 +1,5 @@
 <?php
-include '../config/auth.php';
+include '../config/admin_auth.php';
 include '../config/database.php';
 include '../includes/header.php';
 ?>

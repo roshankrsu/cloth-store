@@ -1,6 +1,6 @@
 <?php
 
-include '../config/auth.php';
+include '../config/admin_auth.php';
 include '../config/database.php';
 
 if (!isset($_GET['id'])) {
