@@ -3,6 +3,16 @@ include 'config/database.php';
 include 'includes/header.php';
 include 'includes/navbar.php';
 
+$limit = 6;
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+if ($page < 1) {
+    $page = 1;
+}
+
+$offset = ($page - 1) * $limit;
+
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
 ?>
@@ -38,6 +48,39 @@ $category = $_GET['category'] ?? '';
                     <option value="">All Categories</option>
 
                     <?php
+
+                    $countSql = "SELECT COUNT(*) AS total
+             FROM products
+             WHERE 1=1";
+
+                    $countParams = [];
+                    $countTypes = "";
+
+                    if (!empty($search)) {
+                        $countSql .= " AND product_name LIKE ?";
+                        $countParams[] = "%" . $search . "%";
+                        $countTypes .= "s";
+                    }
+
+                    if (!empty($category)) {
+                        $countSql .= " AND category_id=?";
+                        $countParams[] = $category;
+                        $countTypes .= "i";
+                    }
+
+                    $countStmt = mysqli_prepare($conn, $countSql);
+
+                    if (!empty($countParams)) {
+                        mysqli_stmt_bind_param($countStmt, $countTypes, ...$countParams);
+                    }
+
+                    mysqli_stmt_execute($countStmt);
+
+                    $countResult = mysqli_stmt_get_result($countStmt);
+
+                    $totalProducts = mysqli_fetch_assoc($countResult)['total'];
+
+                    $totalPages = ceil($totalProducts / $limit);
 
                     $categories = mysqli_query(
                         $conn,
@@ -108,15 +151,16 @@ $category = $_GET['category'] ?? '';
             $types .= "i";
         }
 
-        $sql .= " ORDER BY p.id DESC";
+        $sql .= " ORDER BY p.id DESC LIMIT ?, ?";
+
+        $params[] = $offset;
+        $params[] = $limit;
+
+        $types .= "ii";
 
         $stmt = mysqli_prepare($conn, $sql);
 
-        if (!empty($params)) {
-
-            mysqli_stmt_bind_param($stmt, $types, ...$params);
-
-        }
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
 
         mysqli_stmt_execute($stmt);
 
@@ -188,13 +232,12 @@ $category = $_GET['category'] ?? '';
 
                 </div>
 
-        <?php
+            <?php
 
             }
-
         } else {
 
-        ?>
+            ?>
 
             <div class="col-12">
 
@@ -213,6 +256,34 @@ $category = $_GET['category'] ?? '';
     </div>
 
 </div>
+
+<?php if ($totalPages > 1) { ?>
+
+<nav class="mt-4">
+
+<ul class="pagination justify-content-center">
+
+<?php for ($i = 1; $i <= $totalPages; $i++) { ?>
+
+<li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+
+<a
+class="page-link"
+href="?page=<?= $i ?>&search=<?= urlencode($search) ?>&category=<?= urlencode($category) ?>">
+
+<?= $i ?>
+
+</a>
+
+</li>
+
+<?php } ?>
+
+</ul>
+
+</nav>
+
+<?php } ?>
 
 <?php
 include 'includes/footer.php';
