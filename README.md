@@ -112,7 +112,7 @@ cloth-store/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cloth-store.git
+git clone https://github.com/roshankrsu/cloth-store.git
 ```
 
 ### Move the project
@@ -204,8 +204,8 @@ This project helped me gain practical experience with:
 
 **Roshan Kumar**
 
-- GitHub: https://github.com/YOUR_USERNAME
-- LinkedIn: https://linkedin.com/in/YOUR_LINKEDIN
+- GitHub: https://github.com/roshankrsu
+- LinkedIn: https://linkedin.com/in/roshankrsu
 - Live Demo: https://clothstore.infinityfreeapp.com/
 
 ---
